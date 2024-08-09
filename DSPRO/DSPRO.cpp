@@ -57,3 +57,14 @@ Parcel* createParcel(const char* country, int weight, float value) {
     newParcel->right = NULL;
     return newParcel;
 }
+void insertParcelToTree(Parcel** root, Parcel* newParcel) {
+    if (*root == NULL) {
+        *root = newParcel;
+    }
+    else if (newParcel->weight < (*root)->weight) {
+        insertParcelToTree(&((*root)->left), newParcel);
+    }
+    else {
+        insertParcelToTree(&((*root)->right), newParcel);
+    }
+}
