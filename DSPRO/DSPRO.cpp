@@ -68,3 +68,9 @@ void insertParcelToTree(Parcel** root, Parcel* newParcel) {
         insertParcelToTree(&((*root)->right), newParcel);
     }
 }
+void insertParcel(HashTable* table, const char* country, int weight, float value) {
+    unsigned long hashIndex = hashFunction(country);
+    Parcel* newParcel = createParcel(country, weight, value);
+    insertParcelToTree(&(table[hashIndex].root), newParcel);
+    printf("Inserted: Country: %s, Weight: %d, Value: %.2f\n", country, weight, value); 
+}
