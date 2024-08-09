@@ -20,9 +20,6 @@ typedef struct {
 //tRYING TO FETCH IN HETVI
 // trying to fetching in saloni
 
-
-
-
 unsigned long hashFunction(const char* str) {
     unsigned long hash = 5381;
     int currentChar;
@@ -46,3 +43,17 @@ HashTable* createHashTable() {
     return table;
 }
 
+Parcel* createParcel(const char* country, int weight, float value) {
+    Parcel* newParcel = (Parcel*)malloc(sizeof(Parcel));
+    if (newParcel == NULL) {
+        fprintf(stderr, "Memory allocation failed.\n");
+        exit(1);
+    }
+    strncpy(newParcel->country, country, MAX_COUNTRY_NAME_LENGTH);
+    newParcel->country[MAX_COUNTRY_NAME_LENGTH] = '\0';
+    newParcel->weight = weight;
+    newParcel->value = value;
+    newParcel->left = NULL;
+    newParcel->right = NULL;
+    return newParcel;
+}
