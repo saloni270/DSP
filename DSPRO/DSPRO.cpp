@@ -111,8 +111,12 @@ void displayParcelsForCountryByWeight(HashTable* table, const char* country, int
     printf("Parcels for %s with weight greater than %d (Hash Index: %lu):\n", country, weight, hashIndex);
     displayParcelsByWeight(table[hashIndex].root, weight);
 } 
-
-
-
-
+void calculateTotalLoadAndValuation(Parcel* root, int* totalLoad, float* totalValuation) {
+    if (root != NULL) {
+        calculateTotalLoadAndValuation(root->left, totalLoad, totalValuation);
+        *totalLoad += root->weight;
+        *totalValuation += root->value;
+        calculateTotalLoadAndValuation(root->right, totalLoad, totalValuation);
+    }
+}
 
