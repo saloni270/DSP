@@ -1,4 +1,6 @@
 #include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 
 #define hashTableSize 127
@@ -57,6 +59,14 @@ Parcel* createParcel(const char* country, int weight, float value) {
     newParcel->right = NULL;
     return newParcel;
 }
+
+void insertParcel(HashTable* table, const char* country, int weight, float value) {
+    unsigned long hashIndex = hashFunction(country);
+    Parcel* newParcel = createParcel(country, weight, value);
+    insertParcelToTree(&(table[hashIndex].root), newParcel);
+    printf("Inserted: Country: %s, Weight: %d, Value: %.2f\n", country, weight, value);
+}
+
 void insertParcelToTree(Parcel** root, Parcel* newParcel) {
     if (*root == NULL) {
         *root = newParcel;
@@ -68,9 +78,25 @@ void insertParcelToTree(Parcel** root, Parcel* newParcel) {
         insertParcelToTree(&((*root)->right), newParcel);
     }
 }
-void insertParcel(HashTable* table, const char* country, int weight, float value) {
+
+// saloni u need to create the  function for displaying for the parcel. 
+
+void displayParcelsForCountry(HashTable* table, const char* country) {
     unsigned long hashIndex = hashFunction(country);
-    Parcel* newParcel = createParcel(country, weight, value);
-    insertParcelToTree(&(table[hashIndex].root), newParcel);
-    printf("Inserted: Country: %s, Weight: %d, Value: %.2f\n", country, weight, value); 
+    printf("Parcels for %s:\n", country);
+    if (table[hashIndex].root == NULL) {
+        printf("No parcels found for %s.\n", country);
+    }
+    else {
+        displayParcels(table[hashIndex].root);
+    }
+}
+void displayParcelsByWeight(Parcel* root, int weight) {
+    if (root != NULL) {
+        displayParcelsByWeight(root->left, weight);
+        if (root->weight > weight) {
+            printf("Country: %s, Weight: %d, Value: %.2f\n", root->country, root->weight, root->value);
+        }
+        displayParcelsByWeight(root->right, weight);
+    }
 }
