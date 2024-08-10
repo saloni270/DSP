@@ -18,10 +18,6 @@ typedef struct {
     Parcel* root;
 } HashTable;
 
-
-//tRYING TO FETCH IN HETVI
-// trying to fetching in saloni
-
 unsigned long hashFunction(const char* str) {
     unsigned long hash = 5381;
     int currentChar;
@@ -225,3 +221,26 @@ void displayLightestAndHeaviestParcels(HashTable* table, const char* country) {
         }
     }
 }
+
+
+void loadData(HashTable* table, const char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        exit(1);
+    }
+
+    char line[256];
+    char country[maximumCountryLength + 1];
+    int weight;
+    float value;
+
+    while (fgets(line, sizeof(line), file)) {
+        if (sscanf(line, "%20[^,], %d, %f", country, &weight, &value) == 3) {
+            insertParcel(table, country, weight, value);
+        }
+    }
+
+    fclose(file);
+}
+
