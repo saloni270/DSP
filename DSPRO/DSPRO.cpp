@@ -159,6 +159,23 @@ Parcel* findMostExpensiveParcel(Parcel* root) {
     return mostExpensive;
 }
 
+void displayCheapestAndMostExpensiveParcels(HashTable* table, const char* country) {
+    if (!isCountryInHashTable(table, country)) {
+        printf("No parcels found for %s.\n", country);
+        return;
+    }
+    unsigned long hashIndex = hashFunction(country);
+    printf("Displaying cheapest and most expensive parcels for country: %s\n", country);
+    Parcel* cheapest = findCheapestParcel(table[hashIndex].root);
+    Parcel* mostExpensive = findMostExpensiveParcel(table[hashIndex].root);
+    if (cheapest != NULL) {
+        printf("Cheapest parcel for %s: Weight: %d, Value: %.2f\n", country, cheapest->weight, cheapest->value);
+    }
+    if (mostExpensive != NULL) {
+        printf("Most expensive parcel for %s: Weight: %d, Value: %.2f\n", country, mostExpensive->weight, mostExpensive->value);
+    }
+}
+
 
 Parcel* findLightestParcel(Parcel* root) {
     if (root == NULL) {
