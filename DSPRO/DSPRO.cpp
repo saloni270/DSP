@@ -209,4 +209,19 @@ Parcel* findHeaviestParcel(Parcel* root) {
     return heaviest;
 }
 
-// add the displayed function for the heaviest and the lighest parcel,, i am commiting my function for the chepeast and expensive function. 
+void displayLightestAndHeaviestParcels(HashTable* table, const char* country) {
+    unsigned long hashIndex = hashFunction(country);
+    if (table[hashIndex].root == NULL) {
+        printf("No parcels found for %s.\n", country);
+    }
+    else {
+        Parcel* lightest = findLightestParcel(table[hashIndex].root);
+        Parcel* heaviest = findHeaviestParcel(table[hashIndex].root);
+        if (lightest != NULL) {
+            printf("Lightest parcel for %s: Weight: %d, Value: %.2f\n", country, lightest->weight, lightest->value);
+        }
+        if (heaviest != NULL) {
+            printf("Heaviest parcel for %s: Weight: %d, Value: %.2f\n", country, heaviest->weight, heaviest->value);
+        }
+    }
+}
