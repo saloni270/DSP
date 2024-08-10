@@ -127,6 +127,39 @@ void calculateTotalLoadAndValuation(Parcel* root, int* totalLoad, float* totalVa
     }
 }
 
+Parcel* findCheapestParcel(Parcel* root) {
+    if (root == NULL) {
+        return NULL;
+    }
+    Parcel* cheapest = root;
+    Parcel* leftCheapest = findCheapestParcel(root->left);
+    Parcel* rightCheapest = findCheapestParcel(root->right);
+    if (leftCheapest != NULL && leftCheapest->value < cheapest->value) {
+        cheapest = leftCheapest;
+    }
+    if (rightCheapest != NULL && rightCheapest->value < cheapest->value) {
+        cheapest = rightCheapest;
+    }
+    return cheapest;
+}
+
+Parcel* findMostExpensiveParcel(Parcel* root) {
+    if (root == NULL) {
+        return NULL;
+    }
+    Parcel* mostExpensive = root;
+    Parcel* leftMostExpensive = findMostExpensiveParcel(root->left);
+    Parcel* rightMostExpensive = findMostExpensiveParcel(root->right);
+    if (leftMostExpensive != NULL && leftMostExpensive->value > mostExpensive->value) {
+        mostExpensive = leftMostExpensive;
+    }
+    if (rightMostExpensive != NULL && rightMostExpensive->value > mostExpensive->value) {
+        mostExpensive = rightMostExpensive;
+    }
+    return mostExpensive;
+}
+
+
 Parcel* findLightestParcel(Parcel* root) {
     if (root == NULL) {
         return NULL;
@@ -158,3 +191,5 @@ Parcel* findHeaviestParcel(Parcel* root) {
     }
     return heaviest;
 }
+
+// add the displayed function for the heaviest and the lighest parcel,, i am commiting my function for the chepeast and expensive function. 
