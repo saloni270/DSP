@@ -82,15 +82,16 @@ void insertParcelToTree(Parcel** root, Parcel* newParcel) {
 // saloni u need to create the  function for displaying for the parcel. 
 
 void displayParcelsForCountry(HashTable* table, const char* country) {
-    unsigned long hashIndex = hashFunction(country);
-    printf("Parcels for %s:\n", country);
-    if (table[hashIndex].root == NULL) {
+    if (!isCountryInHashTable(table, country)) {
         printf("No parcels found for %s.\n", country);
+        return;
     }
-    else {
-        displayParcels(table[hashIndex].root);
-    }
+    unsigned long hashIndex = hashFunction(country);
+    printf("Displaying parcels for country: %s\n", country);
+    printf("Parcels for %s (Hash Index: %lu):\n", country, hashIndex);
+    displayParcels(table[hashIndex].root);
 }
+
 void displayParcelsByWeight(Parcel* root, int weight) {
     if (root != NULL) {
         displayParcelsByWeight(root->left, weight);
