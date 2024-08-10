@@ -127,3 +127,34 @@ void calculateTotalLoadAndValuation(Parcel* root, int* totalLoad, float* totalVa
     }
 }
 
+Parcel* findLightestParcel(Parcel* root) {
+    if (root == NULL) {
+        return NULL;
+    }
+    Parcel* lightest = root;
+    Parcel* leftLightest = findLightestParcel(root->left);
+    Parcel* rightLightest = findLightestParcel(root->right);
+    if (leftLightest != NULL && leftLightest->weight < lightest->weight) {
+        lightest = leftLightest;
+    }
+    if (rightLightest != NULL && rightLightest->weight < lightest->weight) {
+        lightest = rightLightest;
+    }
+    return lightest;
+}
+
+Parcel* findHeaviestParcel(Parcel* root) {
+    if (root == NULL) {
+        return NULL;
+    }
+    Parcel* heaviest = root;
+    Parcel* leftHeaviest = findHeaviestParcel(root->left);
+    Parcel* rightHeaviest = findHeaviestParcel(root->right);
+    if (leftHeaviest != NULL && leftHeaviest->weight > heaviest->weight) {
+        heaviest = leftHeaviest;
+    }
+    if (rightHeaviest != NULL && rightHeaviest->weight > heaviest->weight) {
+        heaviest = rightHeaviest;
+    }
+    return heaviest;
+}
