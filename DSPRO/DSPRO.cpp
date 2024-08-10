@@ -78,8 +78,14 @@ void insertParcelToTree(Parcel** root, Parcel* newParcel) {
         insertParcelToTree(&((*root)->right), newParcel);
     }
 }
-
-// saloni u need to create the  function for displaying for the parcel. 
+ 
+void displayParcels(Parcel* root) {
+    if (root != NULL) {
+        displayParcels(root->left);
+        printf("Country: %s, Weight: %d, Value: %.2f\n", root->country, root->weight, root->value);
+        displayParcels(root->right);
+    }
+}
 
 void displayParcelsForCountry(HashTable* table, const char* country) {
     if (!isCountryInHashTable(table, country)) {
