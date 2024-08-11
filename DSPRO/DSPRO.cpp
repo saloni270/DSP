@@ -270,3 +270,62 @@ void displayMenu() {
     printf("6. Exit\n");
 }
 
+int main() {
+    HashTable* table = createHashTable();
+    loadData(table, "couriers.txt");
+
+    int choice;
+    char country[maximumCountryLength + 1];
+    int weight;
+
+    do {
+        displayMenu();
+        printf("Enter your choice: ");
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input.\n");
+            exit(1);
+        }
+        getchar();  // To consume the newline character left by scanf
+
+        switch (choice) {
+        case 1:
+            printf("Enter country name: ");
+            scanf("%s", country);
+            displayParcelsForCountry(table, country);
+            break;
+        case 2:
+            printf("Enter country name: ");
+            scanf("%s", country);
+            printf("Enter weight: ");
+            if (scanf("%d", &weight) != 1) {
+                printf("Invalid input.\n");
+                exit(1);
+            }
+            displayParcelsForCountryByWeight(table, country, weight);
+            break;
+        case 3:
+            printf("Enter country name: ");
+            scanf("%s", country);
+            displayTotalLoadAndValuation(table, country);
+            break;
+        case 4:
+            printf("Enter country name: ");
+            scanf("%s", country);
+            displayCheapestAndMostExpensiveParcels(table, country);
+            break;
+        case 5:
+            printf("Enter country name: ");
+            scanf("%s", country);
+            displayLightestAndHeaviestParcels(table, country);
+            break;
+        case 6:
+            printf("Exiting...\n");
+            break;
+        default:
+            printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 6);
+
+    freeHashTable(table);
+    return 0;
+}
