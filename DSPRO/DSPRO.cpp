@@ -138,6 +138,20 @@ void calculateTotalLoadAndValuation(Parcel* root, int* totalLoad, float* totalVa
     }
 }
 
+void displayTotalLoadAndValuation(HashTable* table, const char* country) {
+    if (!isCountryInHashTable(table, country)) {
+        printf("No parcels found for %s.\n", country);
+        return;
+    }
+    unsigned long hashIndex = hashFunction(country);
+    printf("Displaying total load and valuation for country: %s\n", country);
+    int totalLoad = 0;
+    float totalValuation = 0.0;
+    calculateTotalLoadAndValuation(table[hashIndex].root, &totalLoad, &totalValuation);
+    printf("Total load for %s: %d grams\n", country, totalLoad);
+    printf("Total valuation for %s: %.2f dollars\n", country, totalValuation);
+}
+
 Parcel* findCheapestParcel(Parcel* root) {
     if (root == NULL) {
         return NULL;
