@@ -105,17 +105,21 @@ void displayParcelsForCountry(HashTable* table, const char* country) {
     displayParcels(table[hashIndex].root);
 }
 
-void displayParcelsByWeight(Parcel* root, int weight) {
-    if (root != NULL) {
-        displayParcelsByWeight(root->left, weight);
-        if (root->weight > weight) {
+void displayParcelsByWeight(Parcel* root, int weight, int showGreaterThan) {
+    if (showGreaterThan && root != NULL) {
+        displayParcelsByWeight(root->left, weight, showGreaterThan);
+        if (showGreaterThan && root->weight > weight) {
             printf("Country: %s, Weight: %d, Value: %.2f\n", root->country, root->weight, root->value);
         }
-        displayParcelsByWeight(root->right, weight);
+        else if (!showGreaterThan && root->weight < weight) {
+            printf("Country: %s, Weight: %d, Value: %.2f\n", root->country, root->weight, root->value);
+        }
+        displayParcelsByWeight(root->right, weight,showGreaterThan);
     }
 }
 
-void displayParcelsForCountryByWeight(HashTable* table, const char* country, int weight) {
+
+void displayParcelsForCountryByWeight(HashTable* table, const char* country, int weight,) {
     if (!isCountryInHashTable(table, country)) {
         printf("No parcels found for %s.\n", country);
         return;
