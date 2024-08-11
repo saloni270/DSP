@@ -223,6 +223,22 @@ void displayLightestAndHeaviestParcels(HashTable* table, const char* country) {
 }
 
 
+void freeTree(Parcel * root) {
+    if (root != NULL) {
+        freeTree(root->left);
+        freeTree(root->right);
+        free(root);
+    }
+}
+
+void freeHashTable(HashTable* table) {
+    for (int i = 0; i < hashTableSize; i++) {
+        freeTree(table[i].root);
+    }
+    free(table);
+}
+
+
 void loadData(HashTable* table, const char* filename) {
     FILE* file = fopen(filename, "r");
     if (file == NULL) {
