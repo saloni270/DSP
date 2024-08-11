@@ -1,6 +1,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#pragma warning(disable: 4996)
 
 
 #define hashTableSize 127
@@ -40,7 +41,7 @@ HashTable* createHashTable() {
 Parcel* createParcel(const char* country, int weight, float value) {
     Parcel* newParcel = (Parcel*)malloc(sizeof(Parcel));
     if (newParcel == NULL) {
-        printf("Memory allocation failed.\n");
+        printf ("Memory allocation failed.\n");
         exit(1);
     }
     strncpy(newParcel->country, country, maximumCountryLength);
@@ -51,14 +52,6 @@ Parcel* createParcel(const char* country, int weight, float value) {
     newParcel->right = NULL;
     return newParcel;
 }
-
-void insertParcel(HashTable* table, const char* country, int weight, float value) {
-    unsigned long hashIndex = hashFunction(country);
-    Parcel* newParcel = createParcel(country, weight, value);
-    insertParcelToTree(&(table[hashIndex].root), newParcel);
-    printf("Inserted: Country: %s, Weight: %d, Value: %.2f\n", country, weight, value);
-}
-
 void insertParcelToTree(Parcel** root, Parcel* newParcel) {
     if (*root == NULL) {
         *root = newParcel;
@@ -70,6 +63,14 @@ void insertParcelToTree(Parcel** root, Parcel* newParcel) {
         insertParcelToTree(&((*root)->right), newParcel);
     }
 }
+void insertParcel(HashTable* table, const char* country, int weight, float value) {
+    unsigned long hashIndex = hashFunction(country);
+    Parcel* newParcel = createParcel(country, weight, value);
+    insertParcelToTree(&(table[hashIndex].root), newParcel);
+    printf("Inserted: Country: %s, Weight: %d, Value: %.2f\n", country, weight, value);
+}
+
+
 // saloni trying to add function which i missed suring writing the code.
 int isCountryInTree(Parcel* root, const char* country) {
     if (root == NULL) {
@@ -106,15 +107,17 @@ void displayParcelsForCountry(HashTable* table, const char* country) {
 }
 
 void displayParcelsByWeight(Parcel* root, int weight, int showGreaterThan) {
-    if (showGreaterThan && root != NULL) {
+    if (root != NULL) {
         displayParcelsByWeight(root->left, weight, showGreaterThan);
+
         if (showGreaterThan && root->weight > weight) {
             printf("Country: %s, Weight: %d, Value: %.2f\n", root->country, root->weight, root->value);
         }
         else if (!showGreaterThan && root->weight < weight) {
             printf("Country: %s, Weight: %d, Value: %.2f\n", root->country, root->weight, root->value);
         }
-        displayParcelsByWeight(root->right, weight,showGreaterThan);
+
+        displayParcelsByWeight(root->right, weight, showGreaterThan);
     }
 }
 
@@ -125,12 +128,11 @@ void displayParcelsForCountryByWeight(HashTable* table, const char* country, int
     }
     unsigned long hashIndex = hashFunction(country);
     printf("Displaying parcels for country: %s\n", country);
-    printf("Parcels for %s with weight less than %d (Hash Index: %lu):\n", country, weight, hashIndex);
+    printf("Parcels for %s with weight less than %d:\n", country, weight);
     displayParcelsByWeight(table[hashIndex].root, weight, 0);
-
-    printf("Parcels for %s with weight greater than %d (Hash Index: %lu):\n", country, weight, hashIndex);
-    displayParcelsByWeight(table[hashIndex].root, weight,1);
-} 
+    printf("Parcels for %s with weight greater than %d:\n", country, weight);
+    displayParcelsByWeight(table[hashIndex].root, weight, 1);
+}
 void calculateTotalLoadAndValuation(Parcel* root, int* totalLoad, float* totalValuation) {
     if (root != NULL) {
         calculateTotalLoadAndValuation(root->left, totalLoad, totalValuation);
@@ -139,7 +141,6 @@ void calculateTotalLoadAndValuation(Parcel* root, int* totalLoad, float* totalVa
         calculateTotalLoadAndValuation(root->right, totalLoad, totalValuation);
     }
 }
-
 void displayTotalLoadAndValuation(HashTable* table, const char* country) {
     if (!isCountryInHashTable(table, country)) {
         printf("No parcels found for %s.\n", country);
@@ -360,4 +361,3 @@ int main() {
     freeHashTable(table);
     return 0;
 }
-//checking 
