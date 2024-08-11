@@ -8,7 +8,7 @@
 #define maximumCountryLength 20
 
 typedef struct Parcel {
-    char country[maximumCountryLength + 1];
+    char* country;
     int weight;
     float value;
     struct Parcel* left;
@@ -44,8 +44,13 @@ Parcel* createParcel(const char* country, int weight, float value) {
         printf ("Memory allocation failed.\n");
         exit(1);
     }
-    strncpy(newParcel->country, country, maximumCountryLength);
-    newParcel->country[maximumCountryLength] = '\0';
+    newParcel->country = (char*)malloc(strlen(country) + 1);
+    if (newParcel->country == NULL) {
+        printf("Memory allocation failed.\n");
+        free(newParcel);
+        exit(1);
+    }
+    strcpy(newParcel->country, country);
     newParcel->weight = weight;
     newParcel->value = value;
     newParcel->left = NULL;
@@ -67,7 +72,7 @@ void insertParcel(HashTable* table, const char* country, int weight, float value
     unsigned long hashIndex = hashFunction(country);
     Parcel* newParcel = createParcel(country, weight, value);
     insertParcelToTree(&(table[hashIndex].root), newParcel);
-    printf("Inserted: Country: %s, Weight: %d, Value: %.2f\n", country, weight, value);
+
 }
 
 
@@ -105,6 +110,21 @@ void displayParcelsForCountry(HashTable* table, const char* country) {
     printf("Parcels for %s (Hash Index: %lu):\n", country, hashIndex);
     displayParcels(table[hashIndex].root);
 }
+int hasParcelsByWeight(Parcel* root, int weight, int showGreaterThan) {
+    if (root == NULL) {
+        return 0;
+    }
+
+    if (showGreaterThan && root->weight > weight) {
+        return 1;
+    }
+    else if (!showGreaterThan && root->weight < weight) {
+        return 1;
+    }
+
+    return hasParcelsByWeight(root->left, weight, showGreaterThan) ||
+        hasParcelsByWeight(root->right, weight, showGreaterThan);
+}
 
 void displayParcelsByWeight(Parcel* root, int weight, int showGreaterThan) {
     if (root != NULL) {
@@ -127,12 +147,24 @@ void displayParcelsForCountryByWeight(HashTable* table, const char* country, int
         return;
     }
     unsigned long hashIndex = hashFunction(country);
-    printf("Displaying parcels for country: %s\n", country);
+
     printf("Parcels for %s with weight less than %d:\n", country, weight);
-    displayParcelsByWeight(table[hashIndex].root, weight, 0);
+    if (!hasParcelsByWeight(table[hashIndex].root, weight, 0)) {
+        printf("None\n");
+    }
+    else {
+        displayParcelsByWeight(table[hashIndex].root, weight, 0);
+    }
+
     printf("Parcels for %s with weight greater than %d:\n", country, weight);
-    displayParcelsByWeight(table[hashIndex].root, weight, 1);
+    if (!hasParcelsByWeight(table[hashIndex].root, weight, 1)) {
+        printf("None\n");
+    }
+    else {
+        displayParcelsByWeight(table[hashIndex].root, weight, 1);
+    }
 }
+
 void calculateTotalLoadAndValuation(Parcel* root, int* totalLoad, float* totalValuation) {
     if (root != NULL) {
         calculateTotalLoadAndValuation(root->left, totalLoad, totalValuation);
@@ -238,27 +270,29 @@ Parcel* findHeaviestParcel(Parcel* root) {
 }
 
 void displayLightestAndHeaviestParcels(HashTable* table, const char* country) {
-    unsigned long hashIndex = hashFunction(country);
-    if (table[hashIndex].root == NULL) {
+    if (!isCountryInHashTable(table, country)) {
         printf("No parcels found for %s.\n", country);
+        return;
     }
-    else {
-        Parcel* lightest = findLightestParcel(table[hashIndex].root);
-        Parcel* heaviest = findHeaviestParcel(table[hashIndex].root);
-        if (lightest != NULL) {
-            printf("Lightest parcel for %s: Weight: %d, Value: %.2f\n", country, lightest->weight, lightest->value);
-        }
-        if (heaviest != NULL) {
-            printf("Heaviest parcel for %s: Weight: %d, Value: %.2f\n", country, heaviest->weight, heaviest->value);
-        }
+    unsigned long hashIndex = hashFunction(country);
+    printf("Displaying lightest and heaviest parcels for country: %s\n", country);
+    Parcel* lightest = findLightestParcel(table[hashIndex].root);
+    Parcel* heaviest = findHeaviestParcel(table[hashIndex].root);
+    if (lightest != NULL) {
+        printf("Lightest parcel for %s: Weight: %d, Value: %.2f\n", country, lightest->weight, lightest->value);
+    }
+    if (heaviest != NULL) {
+        printf("Heaviest parcel for %s: Weight: %d, Value: %.2f\n", country, heaviest->weight, heaviest->value);
     }
 }
+
 
 
 void freeTree(Parcel * root) {
     if (root != NULL) {
         freeTree(root->left);
         freeTree(root->right);
+        free(root->country);
         free(root);
     }
 }
@@ -322,12 +356,15 @@ int main() {
         switch (choice) {
         case 1:
             printf("Enter country name: ");
-            scanf("%s", country);
+            fgets(country, sizeof(country), stdin);
+            country[strcspn(country, "\n")] = '\0'; 
             displayParcelsForCountry(table, country);
             break;
+
         case 2:
             printf("Enter country name: ");
-            scanf("%s", country);
+            fgets(country, sizeof(country), stdin);
+            country[strcspn(country, "\n")] = '\0';
             printf("Enter weight: ");
             if (scanf("%d", &weight) != 1) {
                 printf("Invalid input.\n");
@@ -337,17 +374,20 @@ int main() {
             break;
         case 3:
             printf("Enter country name: ");
-            scanf("%s", country);
+            fgets(country, sizeof(country), stdin);
+            country[strcspn(country, "\n")] = '\0';
             displayTotalLoadAndValuation(table, country);
             break;
         case 4:
             printf("Enter country name: ");
-            scanf("%s", country);
+            fgets(country, sizeof(country), stdin);
+            country[strcspn(country, "\n")] = '\0';
             displayCheapestAndMostExpensiveParcels(table, country);
             break;
         case 5:
             printf("Enter country name: ");
-            scanf("%s", country);
+            fgets(country, sizeof(country), stdin);
+            country[strcspn(country, "\n")] = '\0';
             displayLightestAndHeaviestParcels(table, country);
             break;
         case 6:
