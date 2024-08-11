@@ -118,16 +118,18 @@ void displayParcelsByWeight(Parcel* root, int weight, int showGreaterThan) {
     }
 }
 
-
-void displayParcelsForCountryByWeight(HashTable* table, const char* country, int weight,) {
+void displayParcelsForCountryByWeight(HashTable* table, const char* country, int weight) {
     if (!isCountryInHashTable(table, country)) {
         printf("No parcels found for %s.\n", country);
         return;
     }
     unsigned long hashIndex = hashFunction(country);
     printf("Displaying parcels for country: %s\n", country);
+    printf("Parcels for %s with weight less than %d (Hash Index: %lu):\n", country, weight, hashIndex);
+    displayParcelsByWeight(table[hashIndex].root, weight, 0);
+
     printf("Parcels for %s with weight greater than %d (Hash Index: %lu):\n", country, weight, hashIndex);
-    displayParcelsByWeight(table[hashIndex].root, weight);
+    displayParcelsByWeight(table[hashIndex].root, weight,1);
 } 
 void calculateTotalLoadAndValuation(Parcel* root, int* totalLoad, float* totalValuation) {
     if (root != NULL) {
