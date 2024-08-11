@@ -26,17 +26,13 @@ unsigned long hashFunction(const char* str) {
     return hash % hashTableSize;
 }
 HashTable* createHashTable() {
-    HashTable* table = (HashTable*)malloc(sizeof(HashTable));
+    HashTable* table = (HashTable*)malloc(sizeof(HashTable)* hashTableSize);
     if (table == NULL) {
-        return NULL;  
+        printf("Memory allocation failed.\n");
+        exit(1);
     }
-    table->root = (Parcel*)malloc(hashTableSize * sizeof(Parcel));
-    if (table->root == NULL) {
-        free(table);  
-        return NULL;  
-    }
-    for (int i = 0; i < hashTableSize i++) {
-        table->root[i] = NULL;
+    for (int i = 0; i < hashTableSize; i++) {
+        table[i].root = NULL;
     }
     return table;
 }
@@ -44,7 +40,7 @@ HashTable* createHashTable() {
 Parcel* createParcel(const char* country, int weight, float value) {
     Parcel* newParcel = (Parcel*)malloc(sizeof(Parcel));
     if (newParcel == NULL) {
-        fprintf(stderr, "Memory allocation failed.\n");
+        printf("Memory allocation failed.\n");
         exit(1);
     }
     strncpy(newParcel->country, country, maximumCountryLength);
