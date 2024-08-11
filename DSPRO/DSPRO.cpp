@@ -44,13 +44,8 @@ Parcel* createParcel(const char* country, int weight, float value) {
         printf ("Memory allocation failed.\n");
         exit(1);
     }
-    newParcel->country = (char*)malloc(strlen(country) + 1);
-    if (newParcel->country == NULL) {
-        printf("Memory allocation failed.\n");
-        free(newParcel);
-        exit(1);
-    }
-    strcpy(newParcel->country, country);
+    strncpy(newParcel->country, country, maximumCountryLength);
+    newParcel->country[maximumCountryLength] = '\0';
     newParcel->weight = weight;
     newParcel->value = value;
     newParcel->left = NULL;
@@ -75,8 +70,6 @@ void insertParcel(HashTable* table, const char* country, int weight, float value
 
 }
 
-
-// saloni trying to add function which i missed suring writing the code.
 int isCountryInTree(Parcel* root, const char* country) {
     if (root == NULL) {
         return 0;
@@ -292,7 +285,6 @@ void freeTree(Parcel * root) {
     if (root != NULL) {
         freeTree(root->left);
         freeTree(root->right);
-        free(root->country);
         free(root);
     }
 }
