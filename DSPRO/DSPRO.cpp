@@ -47,8 +47,8 @@ Parcel* createParcel(const char* country, int weight, float value) {
         fprintf(stderr, "Memory allocation failed.\n");
         exit(1);
     }
-    strncpy(newParcel->country, country, MAX_COUNTRY_NAME_LENGTH);
-    newParcel->country[MAX_COUNTRY_NAME_LENGTH] = '\0';
+    strncpy(newParcel->country, country, maximumCountryLength);
+    newParcel->country[maximumCountryLength] = '\0';
     newParcel->weight = weight;
     newParcel->value = value;
     newParcel->left = NULL;
@@ -300,7 +300,7 @@ int main() {
             printf("Invalid input.\n");
             exit(1);
         }
-        getchar();  
+        getchar();
 
         switch (choice) {
         case 1:
@@ -344,3 +344,4 @@ int main() {
     freeHashTable(table);
     return 0;
 }
+//checking 
