@@ -74,7 +74,7 @@ void insertParcelToTree(Parcel** root, Parcel* newParcel) {
         insertParcelToTree(&((*root)->right), newParcel);
     }
 }
-
+// saloni trying to add function which i missed suring writing the code.
 int isCountryInTree(Parcel* root, const char* country) {
     if (root == NULL) {
         return 0;
