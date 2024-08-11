@@ -74,6 +74,21 @@ void insertParcelToTree(Parcel** root, Parcel* newParcel) {
         insertParcelToTree(&((*root)->right), newParcel);
     }
 }
+
+int isCountryInTree(Parcel* root, const char* country) {
+    if (root == NULL) {
+        return 0;
+    }
+    if (strcmp(root->country, country) == 0) {
+        return 1;
+    }
+    return isCountryInTree(root->left, country) || isCountryInTree(root->right, country);
+}
+
+int isCountryInHashTable(HashTable* table, const char* country) {
+    unsigned long hashIndex = hashFunction(country);
+    return isCountryInTree(table[hashIndex].root, country);
+}
  
 void displayParcels(Parcel* root) {
     if (root != NULL) {
@@ -327,5 +342,5 @@ int main() {
     } while (choice != 6);
 
     freeHashTable(table);
-    return 0;
+    return 0;
 }
