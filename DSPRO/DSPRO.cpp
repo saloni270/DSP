@@ -285,7 +285,7 @@ int main() {
             printf("Invalid input.\n");
             exit(1);
         }
-        getchar();  // To consume the newline character left by scanf
+        getchar();  
 
         switch (choice) {
         case 1:
