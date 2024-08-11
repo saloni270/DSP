@@ -260,3 +260,13 @@ void loadData(HashTable* table, const char* filename) {
     fclose(file);
 }
 
+void displayMenu() {
+    printf("Menu:\n");
+    printf("1. Enter country name and display all parcels\n");
+    printf("2. Enter country and weight pair to display parcels\n");
+    printf("3. Display total parcel load and valuation for a country\n");
+    printf("4. Display cheapest and most expensive parcels for a country\n");
+    printf("5. Display lightest and heaviest parcels for a country\n");
+    printf("6. Exit\n");
+}
+
