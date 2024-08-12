@@ -10,7 +10,7 @@
 
 // Defining the Parcel struct to hold parcel information.
 typedef struct Parcel {
-    char* country; // Dynamically allocated string for the country name.
+    char country[maximumCountryLength + 1]; // Dynamically allocated string for the country name.
     int weight;
     float value;
     struct Parcel* left;// according to BTS left has lesser value.
@@ -37,8 +37,8 @@ unsigned long hashFunction(const char* str) {
 // data type : HashTable*
 // description: Creating and initialising a new hashtable of the given size.
 HashTable* createHashTable() {
-    // Allocating the memory for the hash table, which is an array of `HashTable` structures.
-    HashTable* table = (HashTable*)malloc(sizeof(HashTable)* hashTableSize);
+    // Allocating the memory for the hash table, which is an array of HashTable structures.
+    HashTable* table = (HashTable*)malloc(sizeof(HashTable) * hashTableSize);
     if (table == NULL) {
         printf("Memory allocation failed.\n");
         exit(1);
@@ -56,9 +56,10 @@ HashTable* createHashTable() {
 Parcel* createParcel(const char* country, int weight, float value) {
     Parcel* newParcel = (Parcel*)malloc(sizeof(Parcel));
     if (newParcel == NULL) {
-        printf ("Memory allocation failed.\n");
+        printf("Memory allocation failed.\n");
         exit(1);
     }
+
     // just copying the country name to the newly allocated memory.
     strncpy(newParcel->country, country, maximumCountryLength);
     newParcel->country[maximumCountryLength] = '\0';// terminating the string.
@@ -69,20 +70,20 @@ Parcel* createParcel(const char* country, int weight, float value) {
     return newParcel;// Returning the pointer to the newly created parcel.
 }
 
-// function name: insertParcelToTree
+// function name: insertParToTree
 // data type: void
 // description: Add a Parcel to a binary search tree using a weight-based insert.
-void insertParcelToTree(Parcel** root, Parcel* newParcel) {
+void insertParToTree(Parcel** root, Parcel* newParcel) {
     if (*root == NULL) {// placing the new parcel there, if the current node is Null.
         *root = newParcel;
     }
     // inserting into the left sub-tree, if the new parcel's weight is less than the current node weight.
     else if (newParcel->weight < (*root)->weight) {
-        insertParcelToTree(&((*root)->left), newParcel);// inserting into left-subtree, recursively.
+        insertParToTree(&((*root)->left), newParcel);// inserting into left-subtree, recursively.
     }
     // inserting into the left sub-tree, if the new parcel's weight is greater than the current node weight.
     else {
-        insertParcelToTree(&((*root)->right), newParcel);// inserting into right-subtree, recursively.
+        insertParToTree(&((*root)->right), newParcel);// inserting into right-subtree, recursively.
     }
 }
 
@@ -92,13 +93,13 @@ void insertParcelToTree(Parcel** root, Parcel* newParcel) {
 void insertParcel(HashTable* table, const char* country, int weight, float value) {
     unsigned long hashIndex = hashFunction(country);// calculating the hash-table
     Parcel* newParcel = createParcel(country, weight, value);
-    insertParcelToTree(&(table[hashIndex].root), newParcel);// inserting new parcel to calculated hash index.
+    insertParToTree(&(table[hashIndex].root), newParcel);// inserting new parcel to calculated hash index.
 
 }
-// function name: isCountryInTree
+// function name: isCounInTree
 // data type: int
 // description: Checks if a country is present in a BST (Binary Tree)
-int isCountryInTree(Parcel* root, const char* country) {
+int isCounInTree(Parcel* root, const char* country) {
     if (root == NULL) {// country is not found, if the current node is Null.
         return 0;
     }
@@ -107,14 +108,14 @@ int isCountryInTree(Parcel* root, const char* country) {
         return 1;
     }
     // searching for the left or right sub-tree.
-    return isCountryInTree(root->left, country) || isCountryInTree(root->right, country);
+    return isCounInTree(root->left, country) || isCounInTree(root->right, country);
 }
-// function name: isCountryInHashTable
+// function name: isCounInHashTable
 // data type: int
 // description: Check if a country exists in the hash table.
-int isCountryInHashTable(HashTable* table, const char* country) {
+int isCounInHashTable(HashTable* table, const char* country) {
     unsigned long hashIndex = hashFunction(country);// calculating the hash-table
-    return isCountryInTree(table[hashIndex].root, country);// if country exits, it calculated the hash index.
+    return isCounInTree(table[hashIndex].root, country);// if country exits, it calculated the hash index.
 }
 // function name: displayParcels
 // data type: void
@@ -126,11 +127,11 @@ void displayParcels(Parcel* root) {
         displayParcels(root->right);
     }
 }
-// function name: displayParcelsForCountry
+// function name: displayParForCoun
 // data type: void
 // description: Retrieving  all Parcels belonging to a specific country from the hash table
-void displayParcelsForCountry(HashTable* table, const char* country) {
-    if (!isCountryInHashTable(table, country)) {// checks if the country exists in the hash table.
+void displayParForCoun(HashTable* table, const char* country) {
+    if (!isCounInHashTable(table, country)) {// checks if the country exists in the hash table.
         printf("No parcels found for %s.\n", country);
         return;
     }
@@ -139,10 +140,10 @@ void displayParcelsForCountry(HashTable* table, const char* country) {
     printf("Parcels for %s (Hash Index: %lu):\n", country, hashIndex);
     displayParcels(table[hashIndex].root);// displaying all parcels and calculates the hash index.
 }
-// function name: displayParcelsForCountry
+// function name: hasParByWeig
 // data type: void
 // description: Retrieving all Parcels belonging to a specific country from the hash table.
-int hasParcelsByWeight(Parcel* root, int weight, int showGreaterThan) {
+int hasParByWeig(Parcel* root, int weight, int showGreaterThan) {
     if (root == NULL) {// there are no more parcel, if the current node is null.
         return 0;
     }
@@ -153,14 +154,14 @@ int hasParcelsByWeight(Parcel* root, int weight, int showGreaterThan) {
     else if (!showGreaterThan && root->weight < weight) {
         return 1; // returning true if it does.
     }
-    return hasParcelsByWeight(root->left, weight, showGreaterThan) ||  hasParcelsByWeight(root->right, weight, showGreaterThan);
+    return hasParByWeig(root->left, weight, showGreaterThan) || hasParByWeig(root->right, weight, showGreaterThan);
 }
-// function name: displayParcelsByWeight
+// function name: displayParByWeig
 // data type: void
 // description: List all Parcels within the BST with a given weight limits. (less than or greater than).
-void displayParcelsByWeight(Parcel* root, int weight, int showGreaterThan) {
+void displayParByWeig(Parcel* root, int weight, int showGreaterThan) {
     if (root != NULL) {// go with traversal if the current node is null.
-        displayParcelsByWeight(root->left, weight, showGreaterThan);
+        displayParByWeig(root->left, weight, showGreaterThan);
         if (showGreaterThan && root->weight > weight) {
             printf("Country: %s, Weight: %d, Value: %.2f\n", root->country, root->weight, root->value);
         }
@@ -168,50 +169,50 @@ void displayParcelsByWeight(Parcel* root, int weight, int showGreaterThan) {
             printf("Country: %s, Weight: %d, Value: %.2f\n", root->country, root->weight, root->value);
         }
 
-        displayParcelsByWeight(root->right, weight, showGreaterThan);// displaying the parcels in the right sub-tree.
+        displayParByWeig(root->right, weight, showGreaterThan);// displaying the parcels in the right sub-tree.
     }
 }
-// function name: displayParcelsForCountryByWeight
+// function name: displayParForCounByWeig
 // data type: void
 // description: Output all Parcels that are linked with the country mentioned in the hash table and satisfy the weight condition.
-void displayParcelsForCountryByWeight(HashTable* table, const char* country, int weight) {
-    if (!isCountryInHashTable(table, country)) {// Check if the country exists in the hash table.
+void displayParForCounByWeig(HashTable* table, const char* country, int weight) {
+    if (!isCounInHashTable(table, country)) {// Check if the country exists in the hash table.
         printf("No parcels found for %s.\n", country);
         return;
     }
     unsigned long hashIndex = hashFunction(country);
 
     printf("Parcels for %s with weight less than %d:\n", country, weight); // informaning the user about weight creteria.
-    if (!hasParcelsByWeight(table[hashIndex].root, weight, 0)) {
+    if (!hasParByWeig(table[hashIndex].root, weight, 0)) {
         printf("None\n");
     }
     else {
-        displayParcelsByWeight(table[hashIndex].root, weight, 0);
+        displayParByWeig(table[hashIndex].root, weight, 0);
     }
     printf("Parcels for %s with weight greater than %d:\n", country, weight);// informaning the user about weight creteria.
-    if (!hasParcelsByWeight(table[hashIndex].root, weight, 1)) {
+    if (!hasParByWeig(table[hashIndex].root, weight, 1)) {
         printf("None\n");
     }
     else {
-        displayParcelsByWeight(table[hashIndex].root, weight, 1);
+        displayParByWeig(table[hashIndex].root, weight, 1);
     }
 }
-// function name: calculateTotalLoadAndValuation
+// function name: calTolLoadAndValue
 // data type: void
 // description: Calculates total weight and total value of all Parcels in the BST and also it changes the input pointers.
-void calculateTotalLoadAndValuation(Parcel* root, int* totalLoad, float* totalValuation) {
+void calTolLoadAndValue(Parcel* root, int* totalLoad, float* totalValuation) {
     if (root != NULL) {
-        calculateTotalLoadAndValuation(root->left, totalLoad, totalValuation);// processing with the calculation, if the node is null.
+        calTolLoadAndValue(root->left, totalLoad, totalValuation);// processing with the calculation, if the node is null.
         *totalLoad += root->weight;// adding the current parcel's weigth to the total load.
         *totalValuation += root->value;// adding the current parcel's value to the total valuation.
-        calculateTotalLoadAndValuation(root->right, totalLoad, totalValuation);
+        calTolLoadAndValue(root->right, totalLoad, totalValuation);
     }
 }
-// function name: displayTotalLoadAndValuation
+// function name: displayTolLoadAndVale
 // data type: void
 // description: Outputs total weight and total value of all Parcels of a particular country in the hash table.
-void displayTotalLoadAndValuation(HashTable* table, const char* country) {
-    if (!isCountryInHashTable(table, country)) { // Checking if the country exists in the hash table.
+void displayTolLoadAndVale(HashTable* table, const char* country) {
+    if (!isCounInHashTable(table, country)) { // Checking if the country exists in the hash table.
         printf("No parcels found for %s.\n", country);
         return;
     }
@@ -219,21 +220,21 @@ void displayTotalLoadAndValuation(HashTable* table, const char* country) {
     printf("Displaying total load and valuation for country: %s\n", country);
     int totalLoad = 0;
     float totalValuation = 0.0;
-    calculateTotalLoadAndValuation(table[hashIndex].root, &totalLoad, &totalValuation);// Calculating the total load and valuation.
+    calTolLoadAndValue(table[hashIndex].root, &totalLoad, &totalValuation);// Calculating the total load and valuation.
     printf("Total load for %s: %d grams\n", country, totalLoad);
     printf("Total valuation for %s: %.2f dollars\n", country, totalValuation);
 }
-// function name: findCheapestParcel
+// function name: findCheapestPar
 // data type: Parcel*
 // description: Finds and returns the Parcel with the lowest value in the BST.
-Parcel* findCheapestParcel(Parcel* root) {
+Parcel* findCheapestPar(Parcel* root) {
     if (root == NULL) {// if the current node is null return null and say no parcel found. 
         return NULL;
     }
     Parcel* cheapest = root;// assuming that chepeast is the current node.
-    Parcel* leftCheapest = findCheapestParcel(root->left);// finding cheapest in the left sub-tree.
-    Parcel* rightCheapest = findCheapestParcel(root->right);// finding the cheapeast in the right sub-rtree.
-   // finding cheapeast from the both sub-tree.
+    Parcel* leftCheapest = findCheapestPar(root->left);// finding cheapest in the left sub-tree.
+    Parcel* rightCheapest = findCheapestPar(root->right);// finding the cheapeast in the right sub-rtree.
+    // finding cheapeast from the both sub-tree.
     if (leftCheapest != NULL && leftCheapest->value < cheapest->value) {
         cheapest = leftCheapest;
     }
@@ -242,16 +243,16 @@ Parcel* findCheapestParcel(Parcel* root) {
     }
     return cheapest;
 }
-// function name: findMostExpensiveParcel
+// function name: findMostExpensivePar
 // data type: Parcel*
 // description: A method that gets the Parcel with the highest value in the BST.
-Parcel* findMostExpensiveParcel(Parcel* root) {
+Parcel* findMostExpensivePar(Parcel* root) {
     if (root == NULL) {// if the current node is null return null and say no parcel found.
         return NULL;
     }
     Parcel* mostExpensive = root;// assuming that most expensive is the current node
-    Parcel* leftMostExpensive = findMostExpensiveParcel(root->left);// finding most expensive in the left sub - tree.
-    Parcel* rightMostExpensive = findMostExpensiveParcel(root->right);// finding most expensive in the right sub - tree
+    Parcel* leftMostExpensive = findMostExpensivePar(root->left);// finding most expensive in the left sub - tree.
+    Parcel* rightMostExpensive = findMostExpensivePar(root->right);// finding most expensive in the right sub - tree
     // finding the most expensive from the both sub-tree.
     if (leftMostExpensive != NULL && leftMostExpensive->value > mostExpensive->value) {
         mostExpensive = leftMostExpensive;
@@ -261,18 +262,18 @@ Parcel* findMostExpensiveParcel(Parcel* root) {
     }
     return mostExpensive;
 }
-// function name: displayCheapestAndMostExpensiveParcels
+// function name: displayCheapestAndMostExpensiveParc
 // data type: void
 // description: Displays the Parcel with the lowest and highest value associated with a specific country in the hash table.
-void displayCheapestAndMostExpensiveParcels(HashTable* table, const char* country) {
-    if (!isCountryInHashTable(table, country)) { // Checking if the country exists in the hash table.
+void displayCheapestAndMostExpensiveParc(HashTable* table, const char* country) {
+    if (!isCounInHashTable(table, country)) { // Checking if the country exists in the hash table.
         printf("No parcels found for %s.\n", country);
         return;
     }
     unsigned long hashIndex = hashFunction(country);
     printf("Displaying cheapest and most expensive parcels for country: %s\n", country);
-    Parcel* cheapest = findCheapestParcel(table[hashIndex].root);// calculating the hash index for the cheapeast parcel.
-    Parcel* mostExpensive = findMostExpensiveParcel(table[hashIndex].root);// calculating the hash index for the most expensive parcel.
+    Parcel* cheapest = findCheapestPar(table[hashIndex].root);// calculating the hash index for the cheapeast parcel.
+    Parcel* mostExpensive = findMostExpensivePar(table[hashIndex].root);// calculating the hash index for the most expensive parcel.
     if (cheapest != NULL) {
         printf("Cheapest parcel for %s: Weight: %d, Value: %.2f\n", country, cheapest->weight, cheapest->value);
     }
@@ -280,16 +281,16 @@ void displayCheapestAndMostExpensiveParcels(HashTable* table, const char* countr
         printf("Most expensive parcel for %s: Weight: %d, Value: %.2f\n", country, mostExpensive->weight, mostExpensive->value);
     }
 }
-// function name: findLightestParcel
+// function name: findLightestPar
 // data type : Parcel*
 // description: Find and return Parcel in the BST with the smallest weight.
-Parcel* findLightestParcel(Parcel* root) {
+Parcel* findLightestPar(Parcel* root) {
     if (root == NULL) {// if the current node is null return null and say no parcel found.
         return NULL;
     }
     Parcel* lightest = root;// assuming that lighest is the current node
-    Parcel* leftLightest = findLightestParcel(root->left);// finding lighest in the left sub - tree
-    Parcel* rightLightest = findLightestParcel(root->right);// finding lighest in the right sub - tree
+    Parcel* leftLightest = findLightestPar(root->left);// finding lighest in the left sub - tree
+    Parcel* rightLightest = findLightestPar(root->right);// finding lighest in the right sub - tree
     // finding the lighest from the both sub-tree.
     if (leftLightest != NULL && leftLightest->weight < lightest->weight) {
         lightest = leftLightest;
@@ -299,16 +300,16 @@ Parcel* findLightestParcel(Parcel* root) {
     }
     return lightest;
 }
-// function name: findHeaviestParcel
+// function name: findHeaviestPar
 // data type: Parcel*
 // description: Find and return the Parcel with the highest weight in the BST.
-Parcel* findHeaviestParcel(Parcel* root) {
+Parcel* findHeaviestPar(Parcel* root) {
     if (root == NULL) {
         return NULL;
     }
     Parcel* heaviest = root;// assuming that lighest is the current node
-    Parcel* leftHeaviest = findHeaviestParcel(root->left);// finding heaviest in the left sub - tree
-    Parcel* rightHeaviest = findHeaviestParcel(root->right);// finding heaviest in the right sub - tree
+    Parcel* leftHeaviest = findHeaviestPar(root->left);// finding heaviest in the left sub - tree
+    Parcel* rightHeaviest = findHeaviestPar(root->right);// finding heaviest in the right sub - tree
     // finding the heaviest from the both sub-tree.
     if (leftHeaviest != NULL && leftHeaviest->weight > heaviest->weight) {
         heaviest = leftHeaviest;
@@ -318,18 +319,18 @@ Parcel* findHeaviestParcel(Parcel* root) {
     }
     return heaviest;
 }
-// function name: displayLightestAndHeaviestParcels
+// function name: displayLightestAndHeaviestPar
 // data type: void
 // description: Displays the Parcel with the least and highest weight linked with a given country in the hash table.
-void displayLightestAndHeaviestParcels(HashTable* table, const char* country) {
-    if (!isCountryInHashTable(table, country)) {// Checking if the country exists in the hash table.
+void displayLightestAndHeaviestParels(HashTable* table, const char* country) {
+    if (!isCounInHashTable(table, country)) {// Checking if the country exists in the hash table.
         printf("No parcels found for %s.\n", country);
         return;
     }
     unsigned long hashIndex = hashFunction(country);
     printf("Displaying lightest and heaviest parcels for country: %s\n", country);// calculating the hash index for the both.
-    Parcel* lightest = findLightestParcel(table[hashIndex].root);// calculating the hash index for the lighest parcel.
-    Parcel* heaviest = findHeaviestParcel(table[hashIndex].root);// calculating the hash table for the heaviest parcel.
+    Parcel* lightest = findLightestPar(table[hashIndex].root);// calculating the hash index for the lighest parcel.
+    Parcel* heaviest = findHeaviestPar(table[hashIndex].root);// calculating the hash table for the heaviest parcel.
     if (lightest != NULL) {
         printf("Lightest parcel for %s: Weight: %d, Value: %.2f\n", country, lightest->weight, lightest->value);
     }
@@ -340,7 +341,7 @@ void displayLightestAndHeaviestParcels(HashTable* table, const char* country) {
 // function name: freeTree
 // data type: void
 // description: Frees the memory for a BST of Parcels.
-void freeTree(Parcel * root) {
+void freeTree(Parcel* root) {
     if (root != NULL) {// if the current node is not null, then proceed with the free uping the memory.
         freeTree(root->left);// free the left sub-tree
         freeTree(root->right);// free the right sub-tree
@@ -413,8 +414,8 @@ int main() {
         case 1:
             printf("Enter country name: ");
             fgets(country, sizeof(country), stdin);// remove newline character.
-            country[strcspn(country, "\n")] = '\0'; 
-            displayParcelsForCountry(table, country);
+            country[strcspn(country, "\n")] = '\0';
+            displayParForCoun(table, country);
             break;
 
         case 2:
@@ -426,25 +427,25 @@ int main() {
                 printf("Invalid input.\n");
                 exit(1);
             }
-            displayParcelsForCountryByWeight(table, country, weight);
+            displayParForCounByWeig(table, country, weight);
             break;
         case 3:
             printf("Enter country name: ");
             fgets(country, sizeof(country), stdin);// remove newline character.
             country[strcspn(country, "\n")] = '\0';
-            displayTotalLoadAndValuation(table, country);
+            displayTolLoadAndVale(table, country);
             break;
         case 4:
             printf("Enter country name: ");
             fgets(country, sizeof(country), stdin);// remove newline character.
             country[strcspn(country, "\n")] = '\0';
-            displayCheapestAndMostExpensiveParcels(table, country);
+            displayCheapestAndMostExpensiveParc(table, country);
             break;
         case 5:
             printf("Enter country name: ");
             fgets(country, sizeof(country), stdin);// remove newline character.
             country[strcspn(country, "\n")] = '\0';
-            displayLightestAndHeaviestParcels(table, country);
+            displayLightestAndHeaviestParels(table, country);
             break;
         case 6:
             printf("Exiting...\n");
