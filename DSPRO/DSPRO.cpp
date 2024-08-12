@@ -370,7 +370,7 @@ int main() {
 
         case 2:
             printf("Enter country name: ");
-            fgets(country, sizeof(country), stdin););// remove newline character.
+            fgets(country, sizeof(country), stdin);// remove newline character.
             country[strcspn(country, "\n")] = '\0';
             printf("Enter weight: ");
             if (scanf("%d", &weight) != 1) {
@@ -381,19 +381,19 @@ int main() {
             break;
         case 3:
             printf("Enter country name: ");
-            fgets(country, sizeof(country), stdin););// remove newline character.
+            fgets(country, sizeof(country), stdin);// remove newline character.
             country[strcspn(country, "\n")] = '\0';
             displayTotalLoadAndValuation(table, country);
             break;
         case 4:
             printf("Enter country name: ");
-            fgets(country, sizeof(country), stdin););// remove newline character.
+            fgets(country, sizeof(country), stdin);// remove newline character.
             country[strcspn(country, "\n")] = '\0';
             displayCheapestAndMostExpensiveParcels(table, country);
             break;
         case 5:
             printf("Enter country name: ");
-            fgets(country, sizeof(country), stdin););// remove newline character.
+            fgets(country, sizeof(country), stdin);// remove newline character.
             country[strcspn(country, "\n")] = '\0';
             displayLightestAndHeaviestParcels(table, country);
             break;
